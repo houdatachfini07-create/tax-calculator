@@ -6,17 +6,25 @@ spec:
   workspaces:
     - name: shared-workspace
   tasks:
-    - name: install-and-test
+    - name: npminstall
       taskRef:
-        name: node-tasks
+        name: npm-install-task
       workspaces:
         - name: source
           workspace: shared-workspace
-    - name: build-image
+    - name: tests
       runAfter:
-        - install-and-test
+        - npminstall
       taskRef:
-        name: buildah # Ou une tâche de build IBM Cloud standard
+        name: jasmine-test-task
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+    - name: build
+      runAfter:
+        - tests
+      taskRef:
+        name: buildah
       workspaces:
         - name: source
           workspace: shared-workspace
