@@ -1,0 +1,25 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: tax-calculator-pipeline
+spec:
+  workspaces:
+    - name: shared-workspace
+  tasks:
+    - name: install-and-test
+      taskRef:
+        name: node-tasks
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+    - name: build-image
+      runAfter:
+        - install-and-test
+      taskRef:
+        name: buildah # Ou une tâche de build IBM Cloud standard
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+      params:
+        - name: IMAGE
+          value: "us.icr.io/votre-namespace/tax-calculator:latest"
